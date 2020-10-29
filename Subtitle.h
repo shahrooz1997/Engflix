@@ -23,7 +23,7 @@ public:
     const uint& get_subtitle_index() const;
     bool is_finished() const;
 
-    const One_subtitle& get_previous_subtitle();
+    const One_subtitle& get_current_subtitle();
     const One_subtitle& get_subtitle();
 
 private:

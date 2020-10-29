@@ -4,9 +4,6 @@
 
 #include "Subtitle.h"
 
-#include <iostream>
-
-
 Subtitle::Subtitle(const string& file_path) : current_subtitle_index(0){
     ifstream in(file_path, ios::in);
     assert(in.is_open());
@@ -68,7 +65,7 @@ bool Subtitle::is_finished() const{
     return false;
 }
 
-const One_subtitle& Subtitle::get_previous_subtitle(){
+const One_subtitle& Subtitle::get_current_subtitle(){
     return subtitles[this->get_subtitle_index()];
 }
 
