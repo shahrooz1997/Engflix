@@ -6,9 +6,8 @@
 #define ENGLISH_TEACHER_VLC_INTERFACE_H
 
 #include "Util.h"
+#include <string>
 
-using namespace std;
-using namespace chrono;
 
 enum State{
     Playing,
@@ -19,18 +18,20 @@ enum State{
 class VLC_interface{
 public:
     VLC_interface() = default;
-    explicit VLC_interface(const string& file_path);
+    explicit VLC_interface(const std::string& file_path);
     ~VLC_interface();
     VLC_interface(const VLC_interface& orig) = delete;
 
     void close();
 
     static void play_pause();
+    static void play();
+    static void pause();
     static State get_state();
 
-    static void seek(const milliseconds& dur);
-    static void seek(const time_point<steady_clock, milliseconds>& tp);
-    static time_point<steady_clock, milliseconds> tell();
+    static void seek(const std::chrono::milliseconds& dur);
+    static void seek(const std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds>& tp);
+    static std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> tell();
 };
 
 

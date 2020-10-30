@@ -5,6 +5,9 @@
 #include "VLC_interface.h"
 #include <fstream>
 
+using namespace std;
+using namespace chrono;
+
 // Todo: Change this class to use dbus API
 
 VLC_interface::VLC_interface(const string& file_path){
@@ -32,7 +35,24 @@ void VLC_interface::play_pause(){
     system(command.c_str());
 }
 
+void VLC_interface::play(){
+    string command = "dbus-send --print-reply --type=method_call --dest=org.mpris.MediaPlayer2.vlc ";
+    command += "/org/mpris/MediaPlayer2 ";
+    command += "org.mpris.MediaPlayer2.Player.Play ";
+    command += "> /dev/null";
+    system(command.c_str());
+}
+
+void VLC_interface::pause(){
+    string command = "dbus-send --print-reply --type=method_call --dest=org.mpris.MediaPlayer2.vlc ";
+    command += "/org/mpris/MediaPlayer2 ";
+    command += "org.mpris.MediaPlayer2.Player.Pause ";
+    command += "> /dev/null";
+    system(command.c_str());
+}
+
 void VLC_interface::seek(const milliseconds& dur){
+//    DPRINTF(DEBUG_VLC_interface, "bbbbbb\n");
     string command = "dbus-send --print-reply --type=method_call --dest=org.mpris.MediaPlayer2.vlc ";
     command += "/org/mpris/MediaPlayer2 ";
     command += "org.mpris.MediaPlayer2.Player.Seek ";
@@ -43,7 +63,9 @@ void VLC_interface::seek(const milliseconds& dur){
     system(command.c_str());
 }
 
+// Todo: set position instead of the following function
 void VLC_interface::seek(const time_point<steady_clock, milliseconds>& tp){
+//    DPRINTF(DEBUG_VLC_interface, "aaaaaa\n");
     time_point<steady_clock, milliseconds> pos = tell();
     seek(tp - pos);
 }
@@ -52,15 +74,27 @@ time_point<steady_clock, milliseconds> VLC_interface::tell(){
     string command = "dbus-send --print-reply --type=method_call --dest=org.mpris.MediaPlayer2.vlc ";
     command += "/org/mpris/MediaPlayer2 ";
     command += "org.freedesktop.DBus.Properties.Get string:\"org.mpris.MediaPlayer2.Player\" string:\"Position\" ";
-    command += "> ../data/Position.txt";
+    command += "> ../data/Position_";
+    string unique_value = to_string(std::chrono::system_clock::now().time_since_epoch().count());
+    command += unique_value;
+    command += ".txt";
     system(command.c_str());
 
-    ifstream in("../data/Position.txt", ios::in);
+    string file_name = "../data/Position_";
+    file_name += unique_value;
+    file_name += ".txt";
+    ifstream in(file_name, ios::in);
     string temp;
     getline(in, temp);
+//    DPRINTF(DEBUG_VLC_interface, "1|%s|\n", temp.c_str());
     getline(in, temp);
+//    DPRINTF(DEBUG_VLC_interface, "2|%s|\n", temp.c_str());
     temp = temp.substr(temp.find("int64 ") + 6);
     uint64_t position = stoull(temp) / 1000; // Time in milliseconds
+
+    command = "rm -rf ";
+    command += file_name;
+    system(command.c_str());
 
     return time_point<steady_clock, milliseconds>(milliseconds(position));
 }

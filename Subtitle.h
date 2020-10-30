@@ -22,13 +22,14 @@ public:
     int set_subtitle_index(const uint& indx);
     const uint& get_subtitle_index() const;
     bool is_finished() const;
+    int set_subtitle_index(const time_point<steady_clock, milliseconds>& tp);
 
     const One_subtitle& get_current_subtitle();
     const One_subtitle& get_subtitle();
 
 private:
     vector<One_subtitle> subtitles;
-    uint current_subtitle_index;
+    uint current_subtitle_index; // pointing to the next subtitle that will be read
 };
 
 
