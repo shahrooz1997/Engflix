@@ -129,11 +129,14 @@ void Handler::start(){
             thread(&Handler::handle_one_subtitle, this, ref(subtitles.get_subtitle()), true, thread_cancel_p).detach();
 //            handle_one_subtitle(subtitles.get_subtitle(), true);
         }
+        else if(in_key == 'w'){
+            VLC_interface::play_pause();
+        }
         else{
             cout << "Wrong input" << endl;
         }
         in_key = getch();
-        if(in_key == 'q' || in_key == 'f' || in_key == 'd' || in_key == 'f' || in_key == 's' || in_key == 'a'){
+        if(in_key == 'q' || in_key == 'f' || in_key == 'd' || in_key == 'f' || in_key == 's' || in_key == 'a' || in_key == 'w'){
             *thread_cancel_p = true;
         }
     }
