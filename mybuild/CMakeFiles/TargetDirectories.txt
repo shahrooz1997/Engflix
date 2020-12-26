@@ -1,0 +1,3 @@
+/home/shahrooz/CLionProjects/English_Teacher/mybuild/CMakeFiles/rebuild_cache.dir
+/home/shahrooz/CLionProjects/English_Teacher/mybuild/CMakeFiles/edit_cache.dir
+/home/shahrooz/CLionProjects/English_Teacher/mybuild/CMakeFiles/English_Teacher.dir
