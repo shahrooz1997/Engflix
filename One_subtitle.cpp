@@ -4,14 +4,20 @@
 
 #include "One_subtitle.h"
 #include <algorithm>
+#include <iostream>
+
+using namespace std;
 
 One_subtitle::One_subtitle(const string& in){
-    vector<string> lines = split_string_the_first_two_lines(in);
-//    for(unsigned char i : lines[0]){
-//        DPRINTF(DEBUG_Subtitile, "|%hhu|\n", i);
-//    }
+    DPRINTF(DEBUG_Subtitile, "The input string is %s\n", in.c_str());
+    vector<string> lines = split_subtitle_string(in);
+    if(lines.size() != 3){
+        cerr << "Wrong subtitle format:\n" << "\"" << in << "\"" << endl;
+        exit(2);
+    }
+
     this->id = stoul(lines[0]);
-    get_start_time_end_time_from_string(lines[1], this->start_time, this->end_time);
+    set_start_time_end_time_from_string(lines[1], this->start_time, this->end_time);
     this->text = lines[2];
 }
 
@@ -19,35 +25,19 @@ uint One_subtitle::get_id() const{
     return id;
 }
 
-//void One_subtitle::set_id(uint id){
-//    One_subtitle::id = id;
-//}
-
 const time_point<steady_clock, milliseconds>& One_subtitle::get_start_time() const{
     return start_time;
 }
-
-//void One_subtitle::set_start_time(const time_point<steady_clock, milliseconds>& start_time){
-//    One_subtitle::start_time = start_time;
-//}
 
 const time_point<steady_clock, milliseconds>& One_subtitle::get_end_time() const{
     return end_time;
 }
 
-//void One_subtitle::set_end_time(const time_point<steady_clock, milliseconds>& end_time){
-//    One_subtitle::end_time = end_time;
-//}
-
 const string& One_subtitle::get_text() const{
     return text;
 }
 
-//void One_subtitle::set_text(const string& text){
-//    One_subtitle::text = text;
-//}
-
-std::vector<std::string> One_subtitle::split_string_the_first_two_lines(const std::string& in){
+std::vector<std::string> One_subtitle::split_subtitle_string(const std::string& in){
     vector<string> ret;
     size_t perv_pos = 0;
     size_t i = 0;
@@ -68,6 +58,14 @@ std::vector<std::string> One_subtitle::split_string_the_first_two_lines(const st
     }
 
     // Standardization
+    size_t last_pos = 0;
+    while(true){
+        last_pos = ret[2].find("\n", last_pos);
+        if(last_pos == -1){
+            break;
+        }
+        ret[2].replace(last_pos, 1, " ");
+    }
     for(auto& line: ret){
         line.erase(remove_if(line.begin(), line.end(), [](char c) {return !isprint(c);} ), line.end());
     }
@@ -88,8 +86,9 @@ std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> On
     return ret;
 }
 
-int One_subtitle::get_start_time_end_time_from_string(const std::string& in, std::chrono::time_point<steady_clock, milliseconds>& start_time,
-                                        std::chrono::time_point<steady_clock, milliseconds>& end_time){
+int One_subtitle::set_start_time_end_time_from_string(const std::string& in,
+                                                      std::chrono::time_point<steady_clock, milliseconds>& start_time,
+                                                      std::chrono::time_point<steady_clock, milliseconds>& end_time){
     size_t pos = in.find(" --> ");
     assert(pos != string::npos);
     start_time = stotime(in.substr(0, pos));

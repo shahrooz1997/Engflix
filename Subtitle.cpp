@@ -4,20 +4,25 @@
 
 #include "Subtitle.h"
 #include <algorithm>
+#include <iostream>
+
+using namespace std;
 
 Subtitle::Subtitle(const string& file_path) : current_subtitle_index(0){
-    ifstream in(file_path, ios::in);
-    assert(in.is_open());
+    ifstream in_file(file_path, ios::in);
+    if(!in_file.is_open()){
+        cerr << "Cannot open the file \"" << file_path << "\"" << endl;
+        exit(2);
+    }
 
     string one_sub_text;
-    while(!in.eof()){
+    while(!in_file.eof()){
         string temp;
-        getline(in, temp);
+        getline(in_file, temp);
         // Standardization
         temp.erase(remove_if(temp.begin(), temp.end(), [](char c) {return !isprint(c);} ), temp.end());
-//        if(temp[temp.size() - 1] == 0x0D)
-//            temp.erase(temp.size() - 1, 1);
-        if(temp.empty()){
+
+        if(temp.empty()){ // subtitle ends
             if(one_sub_text.empty()){
                 continue;
             }
@@ -29,7 +34,7 @@ Subtitle::Subtitle(const string& file_path) : current_subtitle_index(0){
         one_sub_text += "\n";
     }
 
-    in.close();
+    in_file.close();
 }
 
 void Subtitle::reset(){

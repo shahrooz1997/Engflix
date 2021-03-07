@@ -14,5 +14,8 @@ int main(int argc, char* argv[]){
 
     Handler::get_instance(argv[1])->start();
 
+    // Clean up
+    Handler::del_instance();
+
     return 0;
 }

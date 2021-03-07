@@ -7,32 +7,23 @@
 
 #include "Util.h"
 #include <string>
+#include "Interface.h"
 
-#define TEMP_FILES_ADDR "/tmp/English_Teacher/"
-
-enum State{
-    Playing,
-    Paused,
-    Stopped
-};
-
-class VLC_interface{
+class VLC_interface final : public Interface{
 public:
     VLC_interface();
     explicit VLC_interface(const std::string& file_path);
-    ~VLC_interface();
+
+    ~VLC_interface() override;
     VLC_interface(const VLC_interface& orig) = delete;
-
-    void close();
-
-    static void play_pause();
-    static void play();
-    static void pause();
-    static State get_state();
-
-    static void seek(const std::chrono::milliseconds& dur);
-    static void seek(const std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds>& tp);
-    static std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> tell();
+    void close() override;
+    void play_pause() override;
+    void play() override;
+    void pause() override;
+    State get_state() override;
+    void seek(const std::chrono::milliseconds& dur) override;
+    void seek(const std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds>& tp) override;
+    std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> tell() override;
 };
 
 
