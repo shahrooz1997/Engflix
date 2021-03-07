@@ -1,12 +1,18 @@
 #include <iostream>
 #include "Handler.h"
 
+using namespace std;
 
 // Todo: add a recorder
 // Todo: playback the recorded voice with a mute playback of the video
-int main(){
+int main(int argc, char* argv[]){
 
-    Handler::get_instance("/home/shahrooz/Videos/Boss_Baby/S01/The.Boss.Baby.Back.in.Business.S01E01.WEB.srt")->start();
+    if(argc < 2){
+        cerr << "Usage: " << argv[0] << " [subtitle path]" << endl;
+        return 1;
+    }
+
+    Handler::get_instance(argv[1])->start();
 
     return 0;
 }

@@ -11,12 +11,18 @@ using namespace chrono;
 // Todo: Change this class to use dbus API
 
 VLC_interface::VLC_interface(const string& file_path){
+    system("mkdir -p " TEMP_FILES_ADDR);
     // Todo: launch VLC with the video in the path
+}
+
+VLC_interface::VLC_interface(){
+    system("mkdir -p " TEMP_FILES_ADDR);
 }
 
 VLC_interface::~VLC_interface(){
     // Todo: close vlc only if it is open
 //    this->close();
+    system("rm -rf " TEMP_FILES_ADDR);
 }
 
 void VLC_interface::close(){
@@ -74,13 +80,13 @@ time_point<steady_clock, milliseconds> VLC_interface::tell(){
     string command = "dbus-send --print-reply --type=method_call --dest=org.mpris.MediaPlayer2.vlc ";
     command += "/org/mpris/MediaPlayer2 ";
     command += "org.freedesktop.DBus.Properties.Get string:\"org.mpris.MediaPlayer2.Player\" string:\"Position\" ";
-    command += "> ../data/Position_";
+    command += "> " TEMP_FILES_ADDR "Position_";
     string unique_value = to_string(std::chrono::system_clock::now().time_since_epoch().count());
     command += unique_value;
     command += ".txt";
     system(command.c_str());
 
-    string file_name = "../data/Position_";
+    string file_name = TEMP_FILES_ADDR "Position_";
     file_name += unique_value;
     file_name += ".txt";
     ifstream in(file_name, ios::in);
@@ -104,10 +110,10 @@ State VLC_interface::get_state(){
     string command = "dbus-send --print-reply --type=method_call --dest=org.mpris.MediaPlayer2.vlc ";
     command += "/org/mpris/MediaPlayer2 ";
     command += "org.freedesktop.DBus.Properties.Get string:\"org.mpris.MediaPlayer2.Player\" string:\"PlaybackStatus\" ";
-    command += "> ../data/getStatus.txt";
+    command += "> " TEMP_FILES_ADDR "getStatus.txt";
     system(command.c_str());
 
-    ifstream in("../data/getStatus.txt", ios::in);
+    ifstream in(TEMP_FILES_ADDR "getStatus.txt", ios::in);
     string temp;
     getline(in, temp);
     getline(in, temp);
@@ -129,3 +135,5 @@ State VLC_interface::get_state(){
 
     return ret;
 }
+
+

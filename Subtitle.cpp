@@ -18,6 +18,9 @@ Subtitle::Subtitle(const string& file_path) : current_subtitle_index(0){
 //        if(temp[temp.size() - 1] == 0x0D)
 //            temp.erase(temp.size() - 1, 1);
         if(temp.empty()){
+            if(one_sub_text.empty()){
+                continue;
+            }
             this->subtitles.emplace_back(one_sub_text);
             one_sub_text.clear();
             continue;

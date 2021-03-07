@@ -31,7 +31,7 @@ int Handler::wait_until_subtitle(const One_subtitle& sub, Sub_state state, const
     auto last_tp = VLC_interface::tell();
     while(!thread_cancel_p || !*thread_cancel_p){
         auto vlc_tp = VLC_interface::tell();
-        if(vlc_tp > last_tp + milliseconds(CHECK_LOOP_DELAY_MS + 1000)){
+        if(vlc_tp > last_tp + milliseconds(CHECK_LOOP_DELAY_MS + 10000)){
             DPRINTF(DEBUG_Handler, "%li > %li\n", vlc_tp.time_since_epoch().count(), (last_tp + milliseconds(CHECK_LOOP_DELAY_MS + 100)).time_since_epoch().count());
             return Status::MANUAL_SEEK_DETECTED;
         }
@@ -58,7 +58,7 @@ void Handler::handle_one_subtitle(const One_subtitle& sub, bool seek_to_sub, sha
         status = wait_until_subtitle(sub, Sub_state::start, milliseconds(-1000), thread_cancel_p);
     }
     else{
-        VLC_interface::seek(sub.get_start_time() + milliseconds(-100));
+        VLC_interface::seek(sub.get_start_time() + milliseconds(-10));
     }
     if(status == Status::MANUAL_SEEK_DETECTED){
         DPRINTF(DEBUG_Handler, "AAA\n");
@@ -81,7 +81,7 @@ void Handler::handle_one_subtitle(const One_subtitle& sub, bool seek_to_sub, sha
         return;
     }
     VLC_interface::pause();
-    VLC_interface::seek(sub.get_end_time() - milliseconds(1)); // The delay is for keeping the subtitle on the Player
+    VLC_interface::seek(sub.get_end_time() - milliseconds(2)); // The delay is for keeping the subtitle on the Player
 }
 
 // Todo: resolve the screen problem in showing content for new line

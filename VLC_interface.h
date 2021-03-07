@@ -8,6 +8,7 @@
 #include "Util.h"
 #include <string>
 
+#define TEMP_FILES_ADDR "/tmp/English_Teacher/"
 
 enum State{
     Playing,
@@ -17,7 +18,7 @@ enum State{
 
 class VLC_interface{
 public:
-    VLC_interface() = default;
+    VLC_interface();
     explicit VLC_interface(const std::string& file_path);
     ~VLC_interface();
     VLC_interface(const VLC_interface& orig) = delete;

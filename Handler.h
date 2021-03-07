@@ -37,6 +37,7 @@ private:
     void handle_one_subtitle(const One_subtitle& sub, bool seek_to_sub = false, shared_ptr<bool> thread_cancel_p = nullptr);
 
     Subtitle subtitles;
+    VLC_interface player;
 };
 
 
