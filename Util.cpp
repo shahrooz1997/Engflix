@@ -39,36 +39,43 @@ std::string execute(const std::string& program, const std::vector<std::string>& 
         exit(3);
     }
 
-    pid = fork();
-    if(pid == (pid_t)0){ // Child
-        close(mypipe[0]);
-        setvbuf(stdout, NULL, _IONBF, 0);
-        dup2(mypipe[1], STDOUT_FILENO);
-        execvp(argv[0], argv);
-        exit(4);
-    }
-    else{
-        // Cleaning up
-        close (mypipe[1]);
-        for(size_t j = 0; j < i; j++){
-            delete[] argv[j];
-        }
-//        delete[] argv;
-
-        if(pid < (pid_t)0){ // Fork failed
-            cerr << "Fork failed: " << errno << endl;
+    do{
+        pid = fork();
+        if(pid == (pid_t)0){ // Child
             close(mypipe[0]);
-            exit(3);
+            setvbuf(stdout, NULL, _IONBF, 0);
+            dup2(mypipe[1], STDOUT_FILENO);
+            execvp(argv[0], argv);
+            exit(4);
         }
-        else{ // Parent
-            char buf[1024];
-            ssize_t n_read;
-            while((n_read = read(mypipe[0], buf, 1024)) > 0){
-                ret += string(buf, n_read);
+        else{
+            if(pid < (pid_t)0){ // Fork failed
+                if(errno != EAGAIN){
+                    cerr << "Fork failed: " << pid << " " << errno << endl;
+                    close(mypipe[0]);
+                    close(mypipe[1]);
+                    for(size_t j = 0; j < i; j++){
+                        delete[] argv[j];
+                    }
+                    exit(3);
+                }
             }
-            close(mypipe[0]);
-            return ret;
+            else{ // Parent
+                close (mypipe[1]);
+                for(size_t j = 0; j < i; j++){
+                    delete[] argv[j];
+                }
+//                delete[] argv;
+
+                char buf[1024];
+                ssize_t n_read;
+                while((n_read = read(mypipe[0], buf, 1024)) > 0){
+                    ret += string(buf, n_read);
+                }
+                close(mypipe[0]);
+                return ret;
+            }
         }
-    }
+    }while(true);
 }
 
