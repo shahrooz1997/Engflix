@@ -33,7 +33,7 @@ void Handler::del_instance(){
 }
 
 int Handler::wait_until_subtitle(const One_subtitle& sub, Sub_state state, shared_ptr<bool> thread_cancel_p){
-    wait_until_subtitle(sub, state, milliseconds(0), thread_cancel_p);
+    return wait_until_subtitle(sub, state, milliseconds(0), thread_cancel_p);
 }
 
 int Handler::wait_until_subtitle(const One_subtitle& sub, Sub_state state, const milliseconds& delay, shared_ptr<bool> thread_cancel_p){

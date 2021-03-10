@@ -16,7 +16,7 @@ One_subtitle::One_subtitle(const string& in){
         exit(2);
     }
 
-    this->id = stoul(lines[0]);
+    this->id = (uint)stoul(lines[0]);
     set_start_time_end_time_from_string(lines[1], this->start_time, this->end_time);
     this->text = lines[2];
 }
@@ -61,7 +61,7 @@ std::vector<std::string> One_subtitle::split_subtitle_string(const std::string& 
     size_t last_pos = 0;
     while(true){
         last_pos = ret[2].find("\n", last_pos);
-        if(last_pos == -1){
+        if(last_pos == string::npos){
             break;
         }
         ret[2].replace(last_pos, 1, " ");

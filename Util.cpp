@@ -21,9 +21,8 @@ std::string execute(const std::string& program, const std::vector<std::string>& 
     int mypipe[2];
     string ret;
 
-//    char** argv = new char*[args.size() + 1];
-    char* argv[1024];
-    int i = 0;
+    char** argv = new char*[args.size() + 2];
+    size_t i = 0;
     argv[i] = new char[program.size() + 1];
     strcpy(argv[i], program.c_str());
     i++;
@@ -57,6 +56,7 @@ std::string execute(const std::string& program, const std::vector<std::string>& 
                     for(size_t j = 0; j < i; j++){
                         delete[] argv[j];
                     }
+                    delete[] argv;
                     exit(3);
                 }
             }
@@ -65,7 +65,7 @@ std::string execute(const std::string& program, const std::vector<std::string>& 
                 for(size_t j = 0; j < i; j++){
                     delete[] argv[j];
                 }
-//                delete[] argv;
+                delete[] argv;
 
                 char buf[1024];
                 ssize_t n_read;
@@ -78,4 +78,3 @@ std::string execute(const std::string& program, const std::vector<std::string>& 
         }
     }while(true);
 }
-
