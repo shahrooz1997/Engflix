@@ -103,7 +103,7 @@ void Handler::start(){
     refresh();
 
     subtitles.reset();
-    player->seek(time_point<steady_clock, seconds>(seconds(0)));
+//    player->seek(time_point<steady_clock, seconds>(seconds(0)));
 
 //    atomic_bool thread_cancel_first = bool;
 //    handle_one_subtitle(thread_cancel_first, subtitles.get_subtitle());

@@ -98,7 +98,7 @@ std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> On
     } else {
       assert(false);
     }
-    cout << hr.count() << " " << min.count() << " " << sec.count() << " " << ms.count() << endl;
+
     ret += hr;
     ret += min;
     ret += sec;
