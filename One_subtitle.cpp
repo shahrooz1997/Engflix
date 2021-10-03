@@ -75,10 +75,30 @@ std::vector<std::string> One_subtitle::split_subtitle_string(const std::string& 
 
 std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> One_subtitle::stotime(const std::string& in){
     time_point<steady_clock, milliseconds> ret;
-    hours hr(stoull(in.substr(0,2)));
-    minutes min(stoull(in.substr(3,2)));
-    seconds sec(stoull(in.substr(6,2)));
-    milliseconds ms(stoull(in.substr(9,3)));
+    size_t colon_pos = in.find(':');
+    hours hr(stoull(in.substr(0, colon_pos)));
+    size_t colon2_pos = in.find(':', colon_pos + 1);
+    minutes min(stoull(in.substr(colon_pos + 1,colon2_pos - colon_pos - 1)));
+    size_t separator_pos = colon2_pos + 1;
+    while (separator_pos < in.size() && isdigit(in[separator_pos])) {
+      separator_pos++;
+    }
+    seconds sec(stoull(in.substr(colon2_pos + 1, separator_pos - colon2_pos - 1)));
+
+    size_t separator_pos2 = separator_pos + 1;
+    while (separator_pos2 < in.size() && isdigit(in[separator_pos2])) {
+      separator_pos2++;
+    }
+    string ms_str = in.substr(separator_pos + 1,separator_pos2 - separator_pos - 1);
+    milliseconds ms;
+    if (ms_str.size() == 3) {
+      ms = milliseconds(stoull(ms_str));
+    } else if (ms_str.size() == 2) {
+      ms = milliseconds(stoull(ms_str) * 10);
+    } else {
+      assert(false);
+    }
+    cout << hr.count() << " " << min.count() << " " << sec.count() << " " << ms.count() << endl;
     ret += hr;
     ret += min;
     ret += sec;
