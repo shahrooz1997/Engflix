@@ -52,6 +52,8 @@ q: sync the application if you seek the player manually
 
 * Adding Google API to access its dictionary for hard words
 
+* Use window controller to setup a workspace for this app
+
 ## Contact
 
 Hamidreza Zare - [Homepage](http://shahrooz1997.github.io/) - hkz5146@psu.edu
