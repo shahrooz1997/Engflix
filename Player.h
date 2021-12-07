@@ -5,15 +5,17 @@
 #ifndef ENGLISH_TEACHER_INTERFACE_H
 #define ENGLISH_TEACHER_INTERFACE_H
 
+#include <dbus/dbus.h>
+
 enum State{
     Playing,
     Paused,
     Stopped
 };
 
-class Interface{
+class Player{
 public:
-    virtual ~Interface() = default;
+    virtual ~Player() = default;
     virtual void close() = 0;
     virtual void play_pause() = 0;
     virtual void play() = 0;

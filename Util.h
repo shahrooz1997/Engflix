@@ -34,6 +34,9 @@ enum Status{
     MANUAL_SEEK_DETECTED = -5
 };
 
-std::string execute(const std::string& program, const std::vector<std::string>& args);
+int execute(const std::string &program);
+int execute(const std::string &program, std::string &output);
+int execute(const std::string &program, const std::vector<std::string> &args);
+int execute(const std::string &program, const std::vector<std::string> &args, std::string &output);
 
 #endif //ENGLISH_TEACHER_UTIL_H

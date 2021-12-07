@@ -11,7 +11,7 @@
 #include <thread>
 #include <iostream>
 #include <ncurses.h>
-#include "Interface.h"
+#include "Player.h"
 
 
 enum Sub_state{
@@ -41,7 +41,7 @@ private:
     void handle_one_subtitle(const One_subtitle& sub, bool seek_to_sub = false, shared_ptr<bool> thread_cancel_p = nullptr);
 
     Subtitle subtitles;
-    unique_ptr<Interface> player;
+    unique_ptr<Player> player;
 };
 
 
