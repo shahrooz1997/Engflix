@@ -28,8 +28,7 @@ class VLC_interface final : public Player {
   std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds> tell() override;
 
  private:
-  mutex dbus_mutex;
-  DBusError dbus_error;
+  std::mutex dbus_mutex;
   DBusConnection *dbus_conn;
 };
 
