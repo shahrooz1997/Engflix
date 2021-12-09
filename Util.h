@@ -14,6 +14,8 @@
 
 #define CHECK_LOOP_DELAY_MS 10
 
+#define MANUAL_SEEK_MIN_DELAY_MS 1000
+
 extern bool DEBUG_Subtitile;
 extern bool DEBUG_VLC_interface;
 extern bool DEBUG_Handler;
