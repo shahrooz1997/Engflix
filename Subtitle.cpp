@@ -26,7 +26,7 @@ Subtitle::Subtitle(const string& file_path) : current_subtitle_index(0){
             if(one_sub_text.empty()){
                 continue;
             }
-            this->subtitles.emplace_back(one_sub_text);
+            this->subtitles.emplace_back(one_sub_text, this);
             one_sub_text.clear();
             continue;
         }
@@ -99,3 +99,8 @@ const One_subtitle& Subtitle::get_subtitle(){
     this->increase_subtitle_index();
     return subtitles[t_indx];
 }
+const vector<One_subtitle> &Subtitle::get_subtitles() const {
+  return subtitles;
+}
+
+

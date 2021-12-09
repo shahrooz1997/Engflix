@@ -13,8 +13,8 @@
 #include <cstdio>
 
 #define CHECK_LOOP_DELAY_MS 10
-
 #define MANUAL_SEEK_MIN_DELAY_MS 1000
+#define MAX_LINE_LENGTH 20
 
 extern bool DEBUG_Subtitile;
 extern bool DEBUG_VLC_interface;
@@ -40,5 +40,7 @@ int execute(const std::string &program);
 int execute(const std::string &program, std::string &output);
 int execute(const std::string &program, const std::vector<std::string> &args);
 int execute(const std::string &program, const std::vector<std::string> &args, std::string &output);
+
+size_t print_center(const std::string &text, size_t row = 1);
 
 #endif //ENGLISH_TEACHER_UTIL_H

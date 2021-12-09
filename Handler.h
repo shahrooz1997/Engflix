@@ -13,36 +13,40 @@
 #include <ncurses.h>
 #include "Player.h"
 
-
-enum Sub_state{
-    start,
-    end
+enum Sub_state {
+  start,
+  end
 };
 
-class Handler final{
-public:
+class Handler final {
+ public:
 
-    static Handler* get_instance();
-    static Handler* get_instance(const string& subtitle_path);
-    static void del_instance();
+  static Handler *get_instance();
+  static Handler *get_instance(const string &subtitle_path);
+  static void del_instance();
 
-    void start();
+  void start();
 
-private:
-    static Handler* instance; // Singleton class
-    static bool is_destroyed;
+ private:
+  static Handler *instance; // Singleton class
+  static bool is_destroyed;
 
-    explicit Handler(const std::string& subtitle_path);
-    ~Handler() = default;
+  explicit Handler(const std::string &subtitle_path);
+  ~Handler() = default;
 
-    int wait_until_subtitle(const One_subtitle& sub, Sub_state state, shared_ptr<bool> thread_cancel_p = nullptr);
-    int wait_until_subtitle(const One_subtitle& sub, Sub_state state, const milliseconds& delay, shared_ptr<bool> thread_cancel_p = nullptr);
+  int wait_until_subtitle(const One_subtitle &sub, Sub_state state, shared_ptr<bool> thread_cancel_p = nullptr);
+  int wait_until_subtitle(const One_subtitle &sub,
+                          Sub_state state,
+                          const milliseconds &delay,
+                          shared_ptr<bool> thread_cancel_p = nullptr);
 
-    void handle_one_subtitle(const One_subtitle& sub, bool seek_to_sub = false, shared_ptr<bool> thread_cancel_p = nullptr);
+  void handle_one_subtitle(const One_subtitle &sub,
+                           bool seek_to_sub = false,
+                           shared_ptr<bool> thread_cancel_p = nullptr,
+                           shared_ptr<bool> thread_done_p = nullptr);
 
-    Subtitle subtitles;
-    unique_ptr<Player> player;
+  Subtitle subtitles;
+  unique_ptr<Player> player;
 };
-
 
 #endif //ENGLISH_TEACHER_HANDLER_H

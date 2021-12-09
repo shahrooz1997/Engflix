@@ -10,6 +10,8 @@
 #include <iostream>
 #include <cstring>
 #include <sys/wait.h>
+#include <ncurses.h>
+#include <math.h>
 
 bool DEBUG_Subtitile = false;
 bool DEBUG_VLC_interface = false;
@@ -100,4 +102,36 @@ int execute(const std::string &program, const std::vector<std::string> &args) {
 int execute(const std::string &program, std::string &output) {
   std::vector<std::string> args;
   return execute(program, args, output);
+}
+
+void print_center_oneline(const std::string &text, int row) {
+  int center_col = stdscr->_maxx / 2;
+  size_t center_text = text.size() / 2;
+
+  mvwprintw(stdscr, row, center_col - static_cast<int>(center_text), text.c_str());
+}
+
+size_t print_center(const std::string &text, size_t row) {
+  size_t line_length = MAX_LINE_LENGTH;
+  size_t line_number = 0;
+  size_t end_pos = 0;
+  size_t begin_pos = 0;
+  while(begin_pos < text.size()) {
+    if (begin_pos + line_length < text.size()) {
+      end_pos = begin_pos + line_length;
+      while (text[end_pos] != ' ') {
+        end_pos--;
+      }
+    } else {
+      end_pos = text.size();
+    }
+    print_center_oneline(text.substr(begin_pos, end_pos - begin_pos), static_cast<int>(static_cast<size_t>(row) + line_number));
+    begin_pos = end_pos;
+    if (begin_pos < text.size() && text[begin_pos] == ' ') {
+      begin_pos++;
+    }
+    line_number++;
+  }
+
+  return line_number;
 }

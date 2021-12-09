@@ -79,7 +79,10 @@ int Handler::wait_until_subtitle(const One_subtitle &sub,
   return Status::THREAD_CANCELED;
 }
 
-void Handler::handle_one_subtitle(const One_subtitle &sub, bool seek_to_sub, shared_ptr<bool> thread_cancel_p) {
+void Handler::handle_one_subtitle(const One_subtitle &sub,
+                                  bool seek_to_sub,
+                                  shared_ptr<bool> thread_cancel_p,
+                                  shared_ptr<bool> thread_done_p) {
   int status = Status::OK;
   if (!seek_to_sub) {
     // Delay to write the subtitle
@@ -91,24 +94,39 @@ void Handler::handle_one_subtitle(const One_subtitle &sub, bool seek_to_sub, sha
     DPRINTF(DEBUG_Handler, "AAA\n");
     assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == Status::OK);
     handle_one_subtitle(subtitles.get_subtitle(), true, thread_cancel_p);
+    *thread_done_p = true;
     return;
   }
   if (thread_cancel_p && *thread_cancel_p) {
+    *thread_done_p = true;
     return;
   }
-  cout << sub.get_text() << endl;
-  status = wait_until_subtitle(sub, Sub_state::end, milliseconds(0), thread_cancel_p);
+//  cout << sub.get_text() << endl;.
+  clear();
+//  const One_subtitle *sub_prev_p = sub.get_prev();
+//  if (sub_prev_p != nullptr) {
+//    size_t number_of_lines = print_center(sub_prev_p->get_text());
+//    print_center(sub.get_text(), number_of_lines + 2);
+//  } else {
+//    print_center(sub.get_text(), 0);
+//  }
+  print_center(sub.get_text());
+  refresh();
+  status = wait_until_subtitle(sub, Sub_state::end, milliseconds(100), thread_cancel_p);
   if (status == Status::MANUAL_SEEK_DETECTED) {
     DPRINTF(DEBUG_Handler, "bbbb\n");
     assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == Status::OK);
     handle_one_subtitle(subtitles.get_subtitle(), true, thread_cancel_p);
+    *thread_done_p = true;
     return;
   }
   if (thread_cancel_p && *thread_cancel_p) {
+    *thread_done_p = true;
     return;
   }
   player->pause();
-  player->seek(sub.get_end_time() - milliseconds(2)); // The delay is for keeping the subtitle on the Player
+  player->seek(sub.get_end_time() - milliseconds(10));
+  *thread_done_p = true;
 }
 
 // Todo: resolve the screen problem in showing content for new line
@@ -129,41 +147,72 @@ void Handler::start() {
   int in_key = 'd';
   while (!subtitles.is_finished()) {
     shared_ptr<bool> thread_cancel_p(new bool);
+    shared_ptr<bool> thread_done_p(new bool);
     *thread_cancel_p = false;
+    *thread_done_p = false;
     if (in_key == 'q') {
       player->play();
       assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == Status::OK);
-      thread(&Handler::handle_one_subtitle, this, ref(subtitles.get_subtitle()), true, thread_cancel_p).detach();
+      thread(&Handler::handle_one_subtitle,
+             this,
+             ref(subtitles.get_subtitle()),
+             true,
+             thread_cancel_p,
+             thread_done_p).detach();
     } else if (in_key == 'f') {
       player->play();
-      thread(&Handler::handle_one_subtitle, this, ref(subtitles.get_subtitle()), true, thread_cancel_p).detach();
+      thread(&Handler::handle_one_subtitle,
+             this,
+             ref(subtitles.get_subtitle()),
+             true,
+             thread_cancel_p,
+             thread_done_p).detach();
     } else if (in_key == 'd') {
       player->play();
-      thread(&Handler::handle_one_subtitle, this, ref(subtitles.get_subtitle()), false, thread_cancel_p).detach();
+      thread(&Handler::handle_one_subtitle,
+             this,
+             ref(subtitles.get_subtitle()),
+             false,
+             thread_cancel_p,
+             thread_done_p).detach();
 //            handle_one_subtitle(subtitles.get_subtitle());
     } else if (in_key == 's') {
       player->play();
       subtitles.decrease_subtitle_index();
-      thread(&Handler::handle_one_subtitle, this, ref(subtitles.get_subtitle()), true, thread_cancel_p).detach();
+      thread(&Handler::handle_one_subtitle,
+             this,
+             ref(subtitles.get_subtitle()),
+             true,
+             thread_cancel_p,
+             thread_done_p).detach();
 //            handle_one_subtitle(subtitles.get_subtitle(), true);
     } else if (in_key == 'a') {
       player->play();
       subtitles.decrease_subtitle_index();
       subtitles.decrease_subtitle_index();
-      thread(&Handler::handle_one_subtitle, this, ref(subtitles.get_subtitle()), true, thread_cancel_p).detach();
+      thread(&Handler::handle_one_subtitle,
+             this,
+             ref(subtitles.get_subtitle()),
+             true,
+             thread_cancel_p,
+             thread_done_p).detach();
 //            handle_one_subtitle(subtitles.get_subtitle(), true);
     } else if (in_key == 'w') {
+      *thread_done_p = true;
       player->play_pause();
     } else {
+      *thread_done_p = true;
       cout << "Wrong input" << endl;
     }
     in_key = getch();
-    if (in_key == 'q' || in_key == 'f' || in_key == 'd' || in_key == 'f' || in_key == 's' || in_key == 'a'
-        || in_key == 'w') {
-      *thread_cancel_p = true;
+    while (!*thread_done_p && in_key == 'd') {
+      in_key = getch();
     }
+//    if (in_key == 'q' || in_key == 'f' || in_key == 'd' || in_key == 'f' || in_key == 's' || in_key == 'a'
+//        || in_key == 'w') {
+    *thread_cancel_p = true;
+//    }
   }
-
 }
 
 Handler::Handler(const string &subtitle_path) : subtitles(subtitle_path) {
