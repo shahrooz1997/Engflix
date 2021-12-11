@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
   }
 
   Handler::get_instance(argv[1])->start();
+//  Handler::get_instance("/home/shahrooz/Videos/Chucky2021/Chucky.S01E01.720p.WEB_.x265-MiNX.srt")->start();
 
   // Clean up
   Handler::del_instance();

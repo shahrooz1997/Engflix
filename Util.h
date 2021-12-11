@@ -27,7 +27,7 @@ extern bool DEBUG_Handler;
         fflush(stdout); \
     } while(0)
 
-enum Status{
+enum EngFlix_Status{
     OK = 0,
     END_OF_SUBTITLES = -1,
     ID_TOO_BIG = -2,

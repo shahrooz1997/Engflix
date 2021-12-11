@@ -49,11 +49,11 @@ int Handler::wait_until_subtitle(const One_subtitle &sub,
               "%li > %li\n",
               vlc_tp.time_since_epoch().count(),
               (last_tp + milliseconds(loop_delay + milliseconds(MANUAL_SEEK_MIN_DELAY_MS))).time_since_epoch().count());
-      return Status::MANUAL_SEEK_DETECTED;
+      return EngFlix_Status::MANUAL_SEEK_DETECTED;
     }
     if (state == Sub_state::start) {
       if (vlc_tp > sub.get_start_time() + delay) {
-        return Status::OK;
+        return EngFlix_Status::OK;
       } else if (vlc_tp < sub.get_start_time() + delay - seconds(5)) {
         loop_delay = milliseconds(1000);
       } else if (vlc_tp < sub.get_start_time() + delay - seconds(1)) {
@@ -63,7 +63,7 @@ int Handler::wait_until_subtitle(const One_subtitle &sub,
       }
     } else if (state == Sub_state::end) {
       if (vlc_tp > sub.get_end_time() + delay) {
-        return Status::OK;
+        return EngFlix_Status::OK;
       } else if (vlc_tp < sub.get_end_time() + delay - seconds(5)) {
         loop_delay = milliseconds(1000);
       } else if (vlc_tp < sub.get_end_time() + delay - seconds(1)) {
@@ -76,23 +76,23 @@ int Handler::wait_until_subtitle(const One_subtitle &sub,
     this_thread::sleep_for(loop_delay);
   }
 
-  return Status::THREAD_CANCELED;
+  return EngFlix_Status::THREAD_CANCELED;
 }
 
 void Handler::handle_one_subtitle(const One_subtitle &sub,
                                   bool seek_to_sub,
                                   shared_ptr<bool> thread_cancel_p,
                                   shared_ptr<bool> thread_done_p) {
-  int status = Status::OK;
+  int EngFlix_Status = EngFlix_Status::OK;
   if (!seek_to_sub) {
     // Delay to write the subtitle
-    status = wait_until_subtitle(sub, Sub_state::start, milliseconds(-1000), thread_cancel_p);
+    EngFlix_Status = wait_until_subtitle(sub, Sub_state::start, milliseconds(-1000), thread_cancel_p);
   } else {
     player->seek(sub.get_start_time() + milliseconds(-10));
   }
-  if (status == Status::MANUAL_SEEK_DETECTED) {
+  if (EngFlix_Status == EngFlix_Status::MANUAL_SEEK_DETECTED) {
     DPRINTF(DEBUG_Handler, "AAA\n");
-    assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == Status::OK);
+    assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == EngFlix_Status::OK);
     handle_one_subtitle(subtitles.get_subtitle(), true, thread_cancel_p);
     *thread_done_p = true;
     return;
@@ -101,7 +101,7 @@ void Handler::handle_one_subtitle(const One_subtitle &sub,
     *thread_done_p = true;
     return;
   }
-//  cout << sub.get_text() << endl;.
+//  cout << sub.get_text() << endl;
   clear();
 //  const One_subtitle *sub_prev_p = sub.get_prev();
 //  if (sub_prev_p != nullptr) {
@@ -112,10 +112,10 @@ void Handler::handle_one_subtitle(const One_subtitle &sub,
 //  }
   print_center(sub.get_text());
   refresh();
-  status = wait_until_subtitle(sub, Sub_state::end, milliseconds(100), thread_cancel_p);
-  if (status == Status::MANUAL_SEEK_DETECTED) {
+  EngFlix_Status = wait_until_subtitle(sub, Sub_state::end, milliseconds(100), thread_cancel_p);
+  if (EngFlix_Status == EngFlix_Status::MANUAL_SEEK_DETECTED) {
     DPRINTF(DEBUG_Handler, "bbbb\n");
-    assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == Status::OK);
+    assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == EngFlix_Status::OK);
     handle_one_subtitle(subtitles.get_subtitle(), true, thread_cancel_p);
     *thread_done_p = true;
     return;
@@ -132,6 +132,7 @@ void Handler::handle_one_subtitle(const One_subtitle &sub,
 // Todo: resolve the screen problem in showing content for new line
 // Todo: Make the application consistent with the player when it is waiting for input but the user seeks. For now, he must press q after the seeking
 void Handler::start() {
+  this_thread::sleep_for(seconds(1));
   initscr();
   clear();
   noecho();
@@ -152,7 +153,7 @@ void Handler::start() {
     *thread_done_p = false;
     if (in_key == 'q') {
       player->play();
-      assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == Status::OK);
+      assert(subtitles.set_subtitle_index(player->tell() + milliseconds(1)) == EngFlix_Status::OK);
       thread(&Handler::handle_one_subtitle,
              this,
              ref(subtitles.get_subtitle()),

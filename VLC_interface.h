@@ -10,6 +10,7 @@
 #include "Player.h"
 #include <thread>
 #include <mutex>
+#include <X11/Xlib.h>
 
 class VLC_interface final : public Player {
  public:
@@ -30,6 +31,9 @@ class VLC_interface final : public Player {
  private:
   std::mutex dbus_mutex;
   DBusConnection *dbus_conn;
+  Display *disp;
+  Window app_win;
+  Window vlc_win;
 };
 
 #endif //ENGLISH_TEACHER_VLC_INTERFACE_H

@@ -43,36 +43,36 @@ void Subtitle::reset(){
 
 int Subtitle::increase_subtitle_index(){
     if(is_finished()){
-        return Status::END_OF_SUBTITLES;
+        return EngFlix_Status::END_OF_SUBTITLES;
     }
     this->current_subtitle_index++;
-    return Status::OK;
+    return EngFlix_Status::OK;
 }
 
 int Subtitle::decrease_subtitle_index(){
     if(this->current_subtitle_index == 0){
-        return Status::OK;
+        return EngFlix_Status::OK;
     }
     this->current_subtitle_index--;
-    return Status::OK;
+    return EngFlix_Status::OK;
 }
 
 int Subtitle::set_subtitle_index(const uint& indx){
     if(indx > subtitles.size()){
-        return Status::ID_TOO_BIG;
+        return EngFlix_Status::ID_TOO_BIG;
     }
     this->current_subtitle_index = indx;
-    return Status::OK;
+    return EngFlix_Status::OK;
 }
 
 int Subtitle::set_subtitle_index(const time_point<steady_clock, milliseconds>& tp){
-    int ret = Status::BAD_TIME_POINT;
+    int ret = EngFlix_Status::BAD_TIME_POINT;
     for(uint i = 0; i < subtitles.size(); i++){
 //        DPRINTF(DEBUG_Subtitile, "%llu <= %llu\n", tp.time_since_epoch().count(), subtitles[i].get_end_time().time_since_epoch().count());
         if(tp < subtitles[i].get_end_time()){
-            assert(set_subtitle_index(i) == Status::OK);
+            assert(set_subtitle_index(i) == EngFlix_Status::OK);
 //            DPRINTF(DEBUG_Subtitile, "%llu\n", tp.time_since_epoch().count());
-            ret = Status::OK;
+            ret = EngFlix_Status::OK;
             break;
         }
     }

@@ -114,7 +114,7 @@ int One_subtitle::set_start_time_end_time_from_string(const std::string &in,
   assert(pos != string::npos);
   start_time = stotime(in.substr(0, pos));
   end_time = stotime(in.substr(pos + 5));
-  return Status::OK;
+  return EngFlix_Status::OK;
 }
 
 const One_subtitle *One_subtitle::get_next() const {

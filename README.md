@@ -5,7 +5,7 @@ This breaks down a movie to the parts based on the subtitle, and pause after sho
 ## Compile
 This is written specifically for Ubuntu OS. You also need to install VLC Media Player and dbus.
 ```sh
-sudo apt-get install vlc dbus git cmake
+sudo apt-get install vlc dbus git cmake libxmu-dev libglib2.0-dev libdbus-1-dev
 ```
 Then run the following commands:
 ```sh
